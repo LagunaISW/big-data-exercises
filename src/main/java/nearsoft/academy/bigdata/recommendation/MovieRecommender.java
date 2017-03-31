@@ -1,11 +1,9 @@
 package nearsoft.academy.bigdata.recommendation;
 
-import com.google.common.collect.HashBiMap;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 
 /**
  * Created by laguna on 29/03/2017.
@@ -14,20 +12,17 @@ public class MovieRecommender {
 
     private int totalReviews;
     private HashMap<String, Integer> totalUsers;
-    private HashBiMap<String, Integer> totalProducts;
+    private HashMap<String, Integer> totalProducts;
 
     public MovieRecommender(String pathToFile) {
-        this.totalProducts = HashBiMap.create();
+        this.totalProducts = new HashMap<String, Integer>();
         this.totalUsers = new HashMap<String, Integer>();
         setValues(pathToFile);
     }
 
     private void setValues(String path){
         try {
-            InputStream fileStream = new FileInputStream(path);
-            InputStream gzipStream = new GZIPInputStream(fileStream);
-            Reader decoder = new InputStreamReader(gzipStream, "UTF-8");
-            BufferedReader reader = new BufferedReader(decoder);
+            BufferedReader reader = GzipReader.readGzip(path);
 
             String line;
 
@@ -48,9 +43,7 @@ public class MovieRecommender {
             }
 
             reader.close();
-            decoder.close();
-            gzipStream.close();
-            fileStream.close();
+
 
         } catch (IOException e) {
             e.printStackTrace();
